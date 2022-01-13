@@ -1,2 +1,0 @@
-# Amyloid-Beta-Concentric-Circle-Analysis
-In Alzheimer’s disease, abnormal levels of the Aβ protein aggregate together to form Aβ plaques. The response to plaques by microglial cells is characterised by changes in gene expression and an increase in cell density surrounding plaques. This set of semi-automated macros calculates both microglial density and changes in protein expression intensity within concentric circles drawn every 10μm from plaques. The macros used in this analysis were scaled for images taken on a 20X objective. The macros can be edited appropriately.
