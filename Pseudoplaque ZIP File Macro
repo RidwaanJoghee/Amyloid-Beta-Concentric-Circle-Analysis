@@ -1,0 +1,33 @@
+print('Please Open Hippocampus (DAPI) Image');
+run("Open..."); 
+run("8-bit");
+setOption("BlackBackground", false);
+run("Set Scale...", "distance=1 known=0.378 unit=um global");
+for (i=0; i<10;i++)
+{setTool("multipoint");
+waitForUser("Please Select Your Hippocampus Region"); 
+roiManager("add");  
+run("Set Measurements...", "area centroid stack limit redirect=None decimal=3");
+run("Measure");
+X=getResult("X");
+Y=getResult("Y");
+X=X/0.378;
+Y=Y/0.378;
+rad=27; 
+setTool("oval"); 
+makeOval(X-rad, Y-rad, rad*2,rad*2);
+um10_step =54;
+um10=um10_step;
+z=1;
+while(z<12)
+{
+makeOval(X-(rad+um10/2), Y-(rad+um10/2), (rad*2)+um10,(rad*2)+um10);
+run("Measure");
+num = i+1; 
+string1 = "Plaque"+num+" "+(um10/54*10)-10+"um" ; 
+Roi.setName(string1);
+roiManager("Add"); 
+um10=um10+um10_step;
+z=z+1;
+}
+}
