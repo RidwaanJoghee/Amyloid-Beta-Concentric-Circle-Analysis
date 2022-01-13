@@ -1,0 +1,97 @@
+print('Please Open Hippocampus (DAPI) Image');
+run("Open...");
+run("8-bit");
+setOption("BlackBackground", false);
+run("Set Scale...", "distance=1 known=0.378 unit=um global");
+setTool("wand");
+waitForUser("Please Use The Polygon Select Tool To Select Your Hippocampus Region")
+roiManager("add");
+print('Please Open Plaque (AMYTRACKER) Image');
+run("Open...");
+run("8-bit");
+setAutoThreshold("RenyiEntropy dark no-reset");
+temp1=getNumber("Enter Threshold Value",46)
+setThreshold(temp1, 255);
+setOption("BlackBackground", false);
+roiManager("Select", 0);
+run("Clear Outside");
+roiManager("Delete");
+run("Convert to Mask");
+run("Set Scale...", "distance=1 known=0.378 unit=um global");
+setTool("wand");
+run("Analyze Particles...", "size=10-Infinity show=Masks display exclude clear in_situ");
+setThreshold(1, 255);
+setOption("BlackBackground", false);
+run("Convert to Mask");
+run("Set Scale...", "distance=1 known=0.378 unit=um global");
+setTool("wand");
+run("Analyze Particles...", "size=10-Infinity show=[Overlay Masks] display exclude clear add");
+numROIs = roiManager("count");
+arrayX = newArray(numROIs);
+arrayA = newArray(numROIs);
+arrayY = newArray(numROIs);
+arraylength = newArray(numROIs);
+for(i=0; i<numROIs;i++) {roiManager("Select", i);
+run("Set Measurements...", "area centroid stack limit redirect=None decimal=3");
+run("Measure");
+A= getResult("Area");
+rad=A/3.14;
+rad=Math.sqrt(rad);
+rad=rad/0.378;
+X=getResult("X");
+Y=getResult("Y");
+X=X/0.378;
+Y=Y/0.378;
+arrayX[i] =X;
+arrayY[i] =Y;
+arrayA[i] = A;}
+nmaxroi = roiManager("count");
+for(i=0; i<numROIs;i++) {
+A = arrayA[i];
+rad=A/3.14;
+rad=Math.sqrt(rad);
+rad=rad/0.378;
+X=arrayX[i];
+Y=arrayY[i];
+setTool("wand");
+doWand(X, Y);
+um10_step =54;
+um10=um10_step;
+run("Measure");
+num = i+1;
+string1 = "Plaque"+num+" "+0+"um" ;
+Roi.setName(string1);
+roiManager("Add");
+lengthMeasurements = arraylength[i];
+jj=lengthMeasurements;
+j=lengthMeasurements;
+print(j);
+xx=0;
+setTool("oval");
+z=1; 
+while (j==jj)
+{makeOval(X-(rad+um10/2), Y-(rad+um10/2), (rad*2)+um10,(rad*2)+um10);
+run("Measure");
+string1 = "Plaque"+num+" "+um10/54*10+"um" ;
+Roi.setName(string1);
+roiManager("Add");
+Overlay.show;
+lengthMeasurements = getResult("Area");
+print(lengthMeasurements);
+xx=xx+1;
+if (xx < 2)
+{j= lengthMeasurements ;
+jj=lengthMeasurements ;}
+else
+{j= lengthMeasurements ;}
+um10=um10+um10_step;
+z=z+1;}
+half=z/2;
+while (z>half)
+{roiManager("Select", (z-1+nmaxroi));
+roiManager("Delete");
+z=z-1;}
+nmaxroi = roiManager("count");}
+roiManager("Deselect");
+roiManager("save","");
+;
