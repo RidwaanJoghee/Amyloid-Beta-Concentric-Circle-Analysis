@@ -1,0 +1,24 @@
+run("Restore Selection");
+run("Set Scale...", "distance=1 known=0.378 unit=um global");
+run("8-bit");
+run("Set Measurements...", "area display redirect=None decimal=3");
+run("Measure");
+Title=getTitle();
+run("Read and Write Excel", "file=[enter file path/ enter chosen file name.xlsx] sheet="+Title);
+run("Clear Results");
+for(i=6; i<45; i++)		
+{	
+thresholdValue=i+1;
+run("Threshold...");
+setThreshold(thresholdValue, 255);
+setOption("BlackBackground", true);
+run("Analyze Particles...", "size=10-Infinity display exclude");
+n=nResults;
+for(l=0; l<n; l++)
+{
+setResult("Label", l, thresholdValue);
+}		
+Title=getTitle();
+run("Read and Write Excel", "file= [enter file path/ enter chosen file name .xlsx] sheet="+Title);
+run("Clear Results");		
+}
